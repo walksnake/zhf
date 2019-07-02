@@ -10,14 +10,14 @@ import org.apache.commons.httpclient.HttpStatus;
 import org.apache.commons.httpclient.cookie.CookiePolicy;
 import org.apache.commons.httpclient.methods.GetMethod;
 import org.apache.commons.httpclient.params.HttpMethodParams;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import org.springframework.util.StringUtils;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -35,6 +35,7 @@ public class ZhiHuLoader {
     private final static int TIMEOUT_CONNECTION = 200000;
     private final static int TIMEOUT_SOCKET = 200000;
     private static final HttpClient httpClient = getHttpClient();
+    private static final String COOKIE_FILE         = "cookie.txt";
 
     private String rootPath;
 
@@ -161,7 +162,10 @@ public class ZhiHuLoader {
     private String loadHtml(String url){
         try {
             GetMethod getMethod = new GetMethod(url);
-            getMethod.setRequestHeader("cookie", "_xsrf=nnJ0fFWLcRsZOLHBYudfKVe0bA7eSfmE; _zap=58d04803-f963-4204-8dc4-876eb2e818da; d_c0=\"AKDkx9BKAg-PTkHH_WOmM97EEu5-u9YJOBE=|1550631867\"; z_c0=\"2|1:0|10:1550631908|4:z_c0|92:Mi4xU2RZYUFBQUFBQUFBb09USDBFb0NEeVlBQUFCZ0FsVk41QkZhWFFEOTBYdkhGS0dDczFiWGdJRWQ4TENQNC1hZmtn|40d0281f14619e94fe2f636394b7864edef89b3c8b3699126726932d84d82940\"; __utmv=51854390.100-1|2=registration_date=20131010=1^3=entry_date=20131010=1; __gads=ID=1f6c28768505265b:T=1553162554:S=ALNI_MYN3ulGEpMZF70ZryeuznkU85GhqQ; tst=r; q_c1=163767040ef04b84b9952473c3aaf768|1559114279000|1550631912000; __utma=51854390.1097392965.1551406440.1558315313.1561286348.9; __utmc=51854390; __utmz=51854390.1561286348.9.9.utmcsr=zhihu.com|utmccn=(referral)|utmcmd=referral|utmcct=/; tgw_l7_route=73af20938a97f63d9b695ad561c4c10c; anc_cap_id=b80562e0278c458eb49f93e925ff37e7");
+            String cookie = loadCookie();
+            if(!StringUtils.isEmpty(cookie)) {
+                getMethod.setRequestHeader("cookie", cookie);
+            }
 
             int r = httpClient.executeMethod(getMethod);
             if(HttpStatus.SC_OK == r){
@@ -174,6 +178,28 @@ public class ZhiHuLoader {
         }
     }
 
+    private static String CK = null;
+    private String loadCookie() {
+        if(StringUtils.isEmpty(CK)){
+            String ckpath = System.getProperty("user.dir") + File.separator + COOKIE_FILE;
+            File file = new File(ckpath);
+            if(!file.exists() || !file.isFile()){
+                return null;
+            }
+
+            try {
+                List<String> list = FileUtils.readLines(file, "UTF-8");
+                if(list != null && !list.isEmpty()){
+                    CK = list.get(0);
+                }
+            }catch(Exception e){
+
+            }
+        }
+
+        return CK;
+    }
+
     private JSON loadJson(String url){
         String html = loadHtml(url);
         if(StringUtils.isEmpty(html)){
@@ -181,15 +207,6 @@ public class ZhiHuLoader {
         }
 
         return (JSON) JSON.parse(html);
-    }
-
-    private Document loadDocument(String url){
-        try{
-            return Jsoup.connect(url).timeout(120000).followRedirects(true).execute().parse();
-        }catch(Exception e){
-            logger.error(e.getMessage(), e);
-            return null;
-        }
     }
 
     private String decodeUrl(String url){

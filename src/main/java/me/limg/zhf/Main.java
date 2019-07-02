@@ -2,7 +2,7 @@ package me.limg.zhf;
 
 import me.limg.zhf.loader.ZhiHuLoader;
 import org.apache.commons.cli.*;
-import org.springframework.util.StringUtils;
+import org.apache.commons.lang.StringUtils;
 
 import java.io.File;
 
@@ -20,6 +20,7 @@ public class Main {
 
         if(args == null || args.length <= 0){
             printHelp(options);
+            return;
         }
 
         if (commandLine.hasOption("help")) {
