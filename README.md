@@ -2,7 +2,7 @@
 
 ### 用法
 
-```script
+```
 usage: zhf
  -aids <aids>   配置回答ID， 多个ID用','隔开
  -data <data>   配置数据存放路径，默认是data
@@ -15,5 +15,6 @@ usage: zhf
 
 ```
 java -jar zh-fetch-1.0-SNAPSHOT.jar -url https://www.zhihu.com/question/323389488/answer/679220600
+```
 
 在使用前，请登录知乎，并将登录后产生的cookie复制到放在jar包运行目录的cookie.txt文件里。
