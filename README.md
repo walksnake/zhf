@@ -15,3 +15,5 @@ usage: zhf
 
 ```
 java -jar zh-fetch-1.0-SNAPSHOT.jar -url https://www.zhihu.com/question/323389488/answer/679220600
+
+在使用前，请登录知乎，并将登录后产生的cookie复制到放在jar包运行目录的cookie.txt文件里。
