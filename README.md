@@ -20,3 +20,5 @@ java -jar zh-fetch-1.0-SNAPSHOT.jar -url https://www.zhihu.com/question/32338948
 在使用前，请登录知乎，并将登录后产生的cookie复制到放在jar包运行目录的cookie.txt文件里。
 具体方法为打开知乎（使用Chrome），登录后，按F12，选择network，刷新页面，按照图片指示复制Cookie到cookie.txt文件中即可。
 ![截图](1.png)
+
+添加了Cookie之后，就可以愉快地把小姐姐下载到硬盘了。
